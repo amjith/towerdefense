@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Starlight Ramparts - Tower Defense</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <main class="shell">
+      <header class="hud">
+        <div class="brand">
+          <div class="eyebrow">Starlight Ramparts</div>
+          <h1>Tower Defense</h1>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="label">Level</span>
+            <span id="levelName" class="value">I</span>
+          </div>
+          <div class="stat">
+            <span class="label">Wave</span>
+            <span id="waveLabel" class="value">1 / 1</span>
+          </div>
+          <div class="stat highlight">
+            <span class="label">Lives</span>
+            <span id="lives" class="value">20</span>
+          </div>
+          <div class="stat highlight">
+            <span class="label">Credits</span>
+            <span id="money" class="value">50</span>
+          </div>
+        </div>
+        <div class="hud-actions">
+          <button id="startWave" class="primary">Start Wave</button>
+          <button id="nextLevel" class="secondary hidden">Next Level</button>
+          <button id="toggleSpeed" class="ghost">x1</button>
+        </div>
+      </header>
+
+      <section class="arena">
+        <aside class="panel">
+          <h2>Build Deck</h2>
+          <p class="muted">Pick a defender, then place it on open ground.</p>
+          <div class="tower-list">
+            <button class="tower-btn" data-tower="turret">
+              Turret
+              <span>$21</span>
+            </button>
+            <button class="tower-btn" data-tower="slingshot">
+              Catapult
+              <span>$24</span>
+            </button>
+            <button class="tower-btn" data-tower="spike">
+              Spike Trap
+              <span>$20</span>
+            </button>
+            <button class="tower-btn" data-tower="fire">
+              Fire Trap
+              <span>$26</span>
+            </button>
+          </div>
+
+          <div class="panel-block">
+            <h3>Selected</h3>
+            <div id="selectionInfo" class="selection">None</div>
+            <div class="selection-actions">
+              <button id="upgradeBtn" class="primary" disabled>Upgrade</button>
+              <button id="sellBtn" class="ghost" disabled>Sell</button>
+            </div>
+          </div>
+
+          <div class="panel-block">
+            <h3>Quick Tips</h3>
+            <ul>
+              <li>Hover to preview range.</li>
+              <li>Upgrade towers for burst fire.</li>
+              <li>Traps trigger only on-path.</li>
+            </ul>
+          </div>
+        </aside>
+
+        <div class="canvas-wrap">
+          <div id="status" class="status">Awaiting orders.</div>
+          <canvas id="game" aria-label="Tower Defense Game"></canvas>
+          <div id="winOverlay" class="win hidden">
+            <div class="win-card">
+              <div class="win-title">congradulations you win the game</div>
+              <div class="win-subtitle">The frontier is secure.</div>
+            </div>
+          </div>
+          <div id="gameOverOverlay" class="gameover hidden">
+            <div class="gameover-card">
+              <div class="gameover-title">Gates Breached</div>
+              <div class="gameover-subtitle">Your defenses have fallen.</div>
+              <div class="gameover-hint">Refresh to retry.</div>
+            </div>
+          </div>
+          <div id="toast" class="toast hidden"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
