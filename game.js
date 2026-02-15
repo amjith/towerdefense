@@ -65,6 +65,105 @@ const STYLE_SETS = {
 
 const STYLE_ORDER = ["frontier", "dungeon", "armored"];
 
+const LEVEL_VISUALS = [
+  {
+    accent: "#f06b4f",
+    accent2: "#2db6a3",
+    accent3: "#f3b64d",
+    bgTop: "#f8f3e9",
+    bgMid: "#f3e3cb",
+    bgBottom: "#e1c9a5",
+    mapTint: "rgba(255, 198, 129, 0.08)",
+    towerFilter: "none",
+    enemyFilter: "none",
+    enemyBar: "#f06b4f",
+  },
+  {
+    accent: "#d95f46",
+    accent2: "#4ea56a",
+    accent3: "#d2b45e",
+    bgTop: "#edf3e0",
+    bgMid: "#dfe8c6",
+    bgBottom: "#bccba0",
+    mapTint: "rgba(95, 146, 96, 0.12)",
+    towerFilter: "hue-rotate(16deg) saturate(1.08)",
+    enemyFilter: "hue-rotate(22deg) saturate(1.2)",
+    enemyBar: "#d95f46",
+  },
+  {
+    accent: "#5a7fdb",
+    accent2: "#2ca7b0",
+    accent3: "#89c4ec",
+    bgTop: "#e5eff7",
+    bgMid: "#d2dfef",
+    bgBottom: "#afc2de",
+    mapTint: "rgba(112, 152, 218, 0.14)",
+    towerFilter: "hue-rotate(90deg) saturate(1.05)",
+    enemyFilter: "hue-rotate(96deg) saturate(1.2)",
+    enemyBar: "#5a7fdb",
+  },
+  {
+    accent: "#dd7d3c",
+    accent2: "#3588b6",
+    accent3: "#efbe74",
+    bgTop: "#f7e8d9",
+    bgMid: "#eed4b7",
+    bgBottom: "#d9b08c",
+    mapTint: "rgba(214, 124, 56, 0.11)",
+    towerFilter: "hue-rotate(-10deg) saturate(1.15)",
+    enemyFilter: "hue-rotate(-14deg) saturate(1.25)",
+    enemyBar: "#dd7d3c",
+  },
+  {
+    accent: "#7a5ad8",
+    accent2: "#2697a0",
+    accent3: "#c5a0ec",
+    bgTop: "#ece5f8",
+    bgMid: "#ddd0ef",
+    bgBottom: "#c4b0df",
+    mapTint: "rgba(123, 90, 216, 0.11)",
+    towerFilter: "hue-rotate(140deg) saturate(1.12)",
+    enemyFilter: "hue-rotate(160deg) saturate(1.24)",
+    enemyBar: "#7a5ad8",
+  },
+  {
+    accent: "#c95758",
+    accent2: "#56a8b5",
+    accent3: "#dba06b",
+    bgTop: "#f4e3e4",
+    bgMid: "#e8ccce",
+    bgBottom: "#cfaab0",
+    mapTint: "rgba(196, 89, 97, 0.12)",
+    towerFilter: "hue-rotate(196deg) saturate(1.15)",
+    enemyFilter: "hue-rotate(204deg) saturate(1.3)",
+    enemyBar: "#c95758",
+  },
+  {
+    accent: "#4d8aa7",
+    accent2: "#2f8f60",
+    accent3: "#8ec7c4",
+    bgTop: "#deeff1",
+    bgMid: "#c8dfe3",
+    bgBottom: "#a5c2c7",
+    mapTint: "rgba(84, 148, 178, 0.11)",
+    towerFilter: "hue-rotate(250deg) saturate(1.08)",
+    enemyFilter: "hue-rotate(262deg) saturate(1.2)",
+    enemyBar: "#4d8aa7",
+  },
+  {
+    accent: "#8d6052",
+    accent2: "#3f88a1",
+    accent3: "#d4b181",
+    bgTop: "#f0e5dd",
+    bgMid: "#e1d0c2",
+    bgBottom: "#c8ad95",
+    mapTint: "rgba(126, 91, 71, 0.1)",
+    towerFilter: "hue-rotate(300deg) saturate(1.1)",
+    enemyFilter: "hue-rotate(314deg) saturate(1.22)",
+    enemyBar: "#8d6052",
+  },
+];
+
 const TOWER_TYPES = {
   turret: {
     name: "Turret",
@@ -367,6 +466,8 @@ const game = {
   map: [],
   pathPoints: [],
   pathCells: [],
+  levelDifficulty: { health: 1, speed: 1, reward: 1 },
+  levelVisual: LEVEL_VISUALS[0],
   gameOver: false,
   gameWon: false,
 };
@@ -401,6 +502,24 @@ function loadImages() {
 function getSprite(key) {
   const path = STYLE_SETS[currentStyle][key];
   return images[path];
+}
+
+function getLevelDifficulty(index) {
+  return {
+    health: 1 + index * 0.15,
+    speed: 1 + index * 0.07,
+    reward: 1 + index * 0.08,
+  };
+}
+
+function applyLevelVisual(visual) {
+  const root = document.documentElement;
+  root.style.setProperty("--accent", visual.accent);
+  root.style.setProperty("--accent-2", visual.accent2);
+  root.style.setProperty("--accent-3", visual.accent3);
+  root.style.setProperty("--level-bg-top", visual.bgTop);
+  root.style.setProperty("--level-bg-mid", visual.bgMid);
+  root.style.setProperty("--level-bg-bottom", visual.bgBottom);
 }
 
 function expandPath(waypoints) {
@@ -506,6 +625,9 @@ function cellToWorld(cell) {
 function buildLevel(index) {
   const level = LEVELS[index];
   currentStyle = level.style || STYLE_ORDER[index % STYLE_ORDER.length];
+  game.levelDifficulty = level.difficulty || getLevelDifficulty(index);
+  game.levelVisual = LEVEL_VISUALS[index % LEVEL_VISUALS.length];
+  applyLevelVisual(game.levelVisual);
   game.map = Array.from({ length: GRID_H }, () => Array(GRID_W).fill("grass"));
   const path = generateRandomPath(level);
   game.pathCells = path.cells;
@@ -532,7 +654,9 @@ function buildLevel(index) {
   updateSelection();
   updateUI();
   ui.nextLevel.classList.add("hidden");
-  ui.status.textContent = `Level ${index + 1}: ${level.name}`;
+  const bonusHealth = Math.round((game.levelDifficulty.health - 1) * 100);
+  const bonusSpeed = Math.round((game.levelDifficulty.speed - 1) * 100);
+  ui.status.textContent = `Level ${index + 1}: ${level.name} | Enemy +${bonusHealth}% hp, +${bonusSpeed}% speed`;
 }
 
 function buildSpawnQueue(waveDef) {
@@ -562,15 +686,17 @@ function startWave() {
 function spawnEnemy(typeKey) {
   const type = ENEMY_TYPES[typeKey];
   const start = game.pathPoints[0];
+  const health = Math.round(type.health * game.levelDifficulty.health);
+  const reward = Math.max(type.reward, Math.round(type.reward * game.levelDifficulty.reward));
   game.enemies.push({
     id: nextEnemyId += 1,
     type: typeKey,
     x: start.x,
     y: start.y,
-    speed: type.speed,
-    maxHealth: type.health,
-    health: type.health,
-    reward: type.reward,
+    speed: type.speed * game.levelDifficulty.speed,
+    maxHealth: health,
+    health,
+    reward,
     pathIndex: 0,
   });
 }
@@ -875,6 +1001,13 @@ function drawMap() {
       }
     }
   }
+
+  if (game.levelVisual.mapTint) {
+    ctx.save();
+    ctx.fillStyle = game.levelVisual.mapTint;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+  }
 }
 
 function drawEntryExit() {
@@ -906,6 +1039,7 @@ function drawTowers() {
     const img = getSprite(tower.sprite);
     if (!img) continue;
     ctx.save();
+    ctx.filter = game.levelVisual.towerFilter || "none";
     ctx.translate(tower.x, tower.y);
     if (!tower.trap && tower.aim) {
       ctx.rotate(tower.aim + Math.PI / 2);
@@ -928,13 +1062,16 @@ function drawTowers() {
 function drawEnemies() {
   for (const enemy of game.enemies) {
     const sprite = getSprite(ENEMY_TYPES[enemy.type].sprite);
+    ctx.save();
+    ctx.filter = game.levelVisual.enemyFilter || "none";
     ctx.drawImage(sprite, enemy.x - TILE_SIZE / 2, enemy.y - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+    ctx.restore();
     const barWidth = 40;
     const barHeight = 6;
     const percent = Math.max(0, enemy.health / enemy.maxHealth);
     ctx.fillStyle = "rgba(15, 28, 46, 0.6)";
     ctx.fillRect(enemy.x - barWidth / 2, enemy.y - TILE_SIZE / 2 - 10, barWidth, barHeight);
-    ctx.fillStyle = "#f06b4f";
+    ctx.fillStyle = game.levelVisual.enemyBar || "#f06b4f";
     ctx.fillRect(enemy.x - barWidth / 2, enemy.y - TILE_SIZE / 2 - 10, barWidth * percent, barHeight);
   }
 }

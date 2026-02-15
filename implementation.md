@@ -20,7 +20,8 @@
 - [ ] Add optional sound effects + mute toggle.
 
 ## Phase 4 — Balancing + Feedback
-- [ ] Tune wave pacing, tower costs, and upgrade scaling.
+- [x] Scale enemy health/speed per level and adjust rewards.
+- [x] Add level-specific visual themes/tints for clearer style shifts.
 - [ ] Add extra enemy types/behaviors (e.g., fast, armored).
 - [ ] Add visual feedback for hits and kills (spark/impact).
 - [ ] Add saveable settings (speed toggle, last level).

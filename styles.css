@@ -7,6 +7,9 @@
   --accent: #f06b4f;
   --accent-2: #2db6a3;
   --accent-3: #f3b64d;
+  --level-bg-top: #f8f3e9;
+  --level-bg-mid: #f3e3cb;
+  --level-bg-bottom: #e1c9a5;
   --shadow: 0 18px 45px rgba(12, 18, 34, 0.2);
   --glow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 12px 28px rgba(35, 60, 95, 0.18);
 }
@@ -18,7 +21,7 @@
 body {
   margin: 0;
   font-family: "Space Mono", "Courier New", monospace;
-  background: radial-gradient(circle at top, #f8f3e9 0%, #f3e3cb 40%, #e1c9a5 100%);
+  background: radial-gradient(circle at top, var(--level-bg-top) 0%, var(--level-bg-mid) 40%, var(--level-bg-bottom) 100%);
   color: var(--ink);
   min-height: 100vh;
 }
