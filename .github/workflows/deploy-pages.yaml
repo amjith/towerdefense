@@ -23,7 +23,7 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p site
-          cp -R index.html game.js styles.css assets CNAME site/
+          cp -R index.html game.js styles.css assets site/
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -6,7 +6,7 @@ A browser-based tower defense game built with HTML, CSS, and vanilla JavaScript.
 Build a deployable bundle:
 ```bash
 mkdir -p bundle
-cp -R index.html game.js styles.css assets CNAME bundle/
+cp -R index.html game.js styles.css assets bundle/
 ```
 
 Serve locally:
